@@ -48,4 +48,20 @@ public sealed class OrderServiceIntegrationTests
         Assert.Equal(3, orders.Count);
         Assert.Contains(orders, o => o.Id == "ORD-1001");
     }
+
+    [Fact]
+    public async Task VersionEndpoint_ReturnsVersion()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/version");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var content = await response.Content.ReadAsStreamAsync();
+        var body = await JsonSerializer.DeserializeAsync<VersionResponse>(
+            content, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        Assert.NotNull(body);
+        Assert.Equal("1.0.0", body.Version);
+    }
 }
