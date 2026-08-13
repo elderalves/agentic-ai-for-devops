@@ -1,0 +1,83 @@
+name: Release Notes Data Collection
+
+on:
+  push:
+    branches: [main]
+
+# Cancel any run already in progress for main, so a rapid string of merges
+# doesn't leave stale collection runs racing the newest one.
+concurrency:
+  group: release-notes-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least-privilege default: this job only reads the repo and PR metadata to
+# build release-report.json. It never writes to the repo, comments, or
+# releases - that's left to whatever job(s) consume this artifact later.
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  collect-pr-metadata:
+    name: Collect Merged PR Metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # A push to main is (almost always) a merge/squash/rebase commit from a
+      # PR. listPullRequestsAssociatedWithCommit maps that commit SHA back to
+      # the PR(s) that produced it, so we don't have to guess PR numbers from
+      # commit message text.
+      - name: Collect merged PR metadata
+        id: collect
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const { data: associatedPrs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+            });
+
+            const mergedPrs = associatedPrs.filter((pr) => pr.merged_at);
+
+            const pullRequests = mergedPrs.map((pr) => ({
+              number: pr.number,
+              title: pr.title,
+              author: pr.user ? pr.user.login : null,
+              labels: pr.labels.map((label) => label.name),
+              body: pr.body || '',
+              merged_at: pr.merged_at,
+              url: pr.html_url,
+            }));
+
+            const report = {
+              generated_at: new Date().toISOString(),
+              commit: context.sha,
+              pull_requests: pullRequests,
+            };
+
+            fs.writeFileSync('release-report.json', JSON.stringify(report, null, 2));
+            core.info(`Collected metadata for ${pullRequests.length} merged PR(s).`);
+
+      - name: Upload release report
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-report
+          path: release-report.json
+
+      - name: Validate release notes not empty
+        run: |
+          test -s release-notes.md || (echo "Release notes empty" && exit 1)
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release-notes.md
+          draft: true
