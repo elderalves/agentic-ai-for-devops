@@ -65,7 +65,7 @@ jobs:
         # Explicit configuration on restore too, since conditional
         # PackageReferences can vary by configuration - don't rely on the
         # implicit default (Debug) diverging from the Release build below.
-        run: dotnet restore src/GenAIDevOps.sln --configuration Release
+        run: dotnet restore src/GenAIDevOps.sln -p:Configuration=Release
 
       - name: Build
         # --no-restore keeps restore and build as separate, explicit steps
