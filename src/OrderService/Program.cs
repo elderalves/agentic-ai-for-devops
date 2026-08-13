@@ -27,3 +27,5 @@ public static class HealthEndpoints
 {
     public static HealthResponse GetHealthResponse() => new("ok");
 }
+
+public partial class Program { }
