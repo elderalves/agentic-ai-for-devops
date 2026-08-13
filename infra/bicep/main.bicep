@@ -9,12 +9,6 @@ param location string = resourceGroup().location
 ])
 param environmentName string
 
-@description('Login server of the container registry hosting the image, e.g. myregistry.azurecr.io.')
-param containerRegistryServer string
-
-@description('Name of the Azure Container Registry, used to scope the AcrPull role assignment.')
-param containerRegistryName string
-
 @description('Name of the Azure Container App to deploy.')
 param containerAppName string
 
@@ -29,10 +23,41 @@ var tags = {
   project: 'agentic-ai-for-devops'
 }
 
-var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a904-db1a01988931')
+var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+var containerRegistryName = 'acr${environmentName}${uniqueString(resourceGroup().id)}'
+var containerAppIdentityName = 'id-${environmentName}-agentic-ai-for-devops'
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: containerRegistryName
+  location: location
+  tags: tags
+  sku: {
+    name: 'Basic'
+  }
+  properties: {
+    adminUserEnabled: false
+  }
+}
+
+resource containerAppIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: containerAppIdentityName
+  location: location
+  tags: tags
+}
+
+// Granted to the user-assigned identity (not the Container App's own identity) so that
+// AcrPull is in place before the Container App tries to pull its image on first create.
+// Scoping this to the Container App instead creates a circular dependency: the role
+// assignment would need the app to finish provisioning, but the app can't finish
+// provisioning without the pull permission.
+resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, containerAppIdentity.id, acrPullRoleDefinitionId)
+  scope: containerRegistry
+  properties: {
+    roleDefinitionId: acrPullRoleDefinitionId
+    principalId: containerAppIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
 }
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
@@ -67,7 +92,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   location: location
   tags: tags
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${containerAppIdentity.id}': {}
+    }
   }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
@@ -80,8 +108,8 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       }
       registries: [
         {
-          server: containerRegistryServer
-          identity: 'system'
+          server: containerRegistry.properties.loginServer
+          identity: containerAppIdentity.id
         }
       ]
     }
@@ -89,7 +117,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       containers: [
         {
           name: imageName
-          image: '${containerRegistryServer}/${imageName}:${imageTag}'
+          image: '${containerRegistry.properties.loginServer}/${imageName}:${imageTag}'
           resources: {
             cpu: json('0.5')
             memory: '1Gi'
@@ -102,16 +130,9 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       }
     }
   }
-}
-
-resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(containerRegistry.id, containerApp.id, acrPullRoleDefinitionId)
-  scope: containerRegistry
-  properties: {
-    roleDefinitionId: acrPullRoleDefinitionId
-    principalId: containerApp.identity.principalId
-    principalType: 'ServicePrincipal'
-  }
+  dependsOn: [
+    acrPullRoleAssignment
+  ]
 }
 
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
@@ -122,4 +143,6 @@ output containerAppsEnvironmentDefaultDomain string = containerAppsEnvironment.p
 output containerAppId string = containerApp.id
 output containerAppName string = containerApp.name
 output containerAppFqdn string = containerApp.properties.configuration.ingress.fqdn
-output containerAppPrincipalId string = containerApp.identity.principalId
+output containerRegistryName string = containerRegistry.name
+output containerRegistryLoginServer string = containerRegistry.properties.loginServer
+output containerAppIdentityId string = containerAppIdentity.id
