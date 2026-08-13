@@ -1,7 +1,8 @@
-var builder = Host.CreateApplicationBuilder(args);
+public static class Program
+{
+    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-builder.Services.AddHostedService<Worker>();
-
-var host = builder.Build();
-
-host.Run();
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureServices((_, services) => services.AddHostedService<Worker>());
+}

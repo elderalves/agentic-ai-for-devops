@@ -1,0 +1,286 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+
+# Cancel any run already in progress for the same PR when a new commit
+# arrives, so we don't burn runner minutes validating a commit that's
+# already superseded.
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+# Least-privilege default: reading the repo to build/test/format-check it,
+# plus write access so dependency-review-action and the PR summary job can
+# comment on the PR (comments on a PR go through the issues API, hence
+# `issues: write` in addition to `pull-requests: write`).
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+env:
+  # Skip telemetry prompts/pings and the "first run" asset population -
+  # both are non-deterministic latency/output on a CI runner.
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_NOLOGO: "true"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('src/**/*.csproj', 'src/**/packages.lock.json', 'src/**/Directory.Packages.props') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore src/GenAIDevOps.sln -p:Configuration=Release
+
+      - name: Build
+        run: dotnet build src/GenAIDevOps.sln --configuration Release --no-restore -p:ContinuousIntegrationBuild=true
+
+      # coverlet.msbuild fails the build itself if total line coverage is
+      # below Threshold, so no separate pass/fail scripting is needed here.
+      - name: Test with coverage
+        run: >
+          dotnet test src/GenAIDevOps.sln --configuration Release --no-build
+          --logger "trx" --results-directory ./TestResults
+          /p:CollectCoverage=true
+          /p:CoverletOutputFormat=cobertura
+          /p:Threshold=70
+          /p:ThresholdType=line
+          /p:ThresholdStat=total
+
+      - name: Upload test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults/*.trx
+
+      - name: Generate coverage report
+        if: success() || failure()
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: "**/coverage.cobertura.xml"
+          targetdir: CoverageReport
+          reporttypes: Html
+
+      - name: Upload coverage report
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: CoverageReport
+
+  formatting-check:
+    name: Formatting Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore src/GenAIDevOps.sln
+
+      - name: Verify formatting
+        run: dotnet format src/GenAIDevOps.sln --verify-no-changes
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # - name: Dependency Review
+      #   uses: actions/dependency-review-action@v4
+
+  pr-summary:
+    name: PR Summary Comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [build-test, formatting-check, dependency-review]
+    # Post the summary even if a check above failed - risk/testing context
+    # is still useful, and this job never affects overall PR status.
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full history so the base and head commits used below are
+          # both present locally for diffing/logging.
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Everything here is derived purely from `git log`/`git diff` against
+      # the PR's actual base/head SHAs and the PR title from the event
+      # payload - no generative summarization, so it can't invent changes
+      # that aren't really in the diff.
+      - name: Build PR summary
+        id: build-summary
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+
+          COMMITS=$(git log --pretty=format:'- %s (`%h`)' "${BASE_SHA}..${HEAD_SHA}")
+          if [ -z "$COMMITS" ]; then
+            COMMITS="- (no commits found between base and head)"
+          fi
+
+          CHANGED_FILES=$(git diff --name-status "${BASE_SHA}...${HEAD_SHA}")
+          FILE_COUNT=$(printf '%s\n' "$CHANGED_FILES" | grep -c '^' || true)
+          DIFFSTAT=$(git diff --shortstat "${BASE_SHA}...${HEAD_SHA}")
+          [ -z "$DIFFSTAT" ] && DIFFSTAT="no changes"
+
+          FILE_LIST=$(printf '%s\n' "$CHANGED_FILES" | head -50 | awk -F'\t' '
+            NF==3 { printf "- `%s` -> `%s` (renamed)\n", $2, $3; next }
+            NF==2 {
+              code=substr($1,1,1)
+              label="Modified"
+              if (code=="A") label="Added"
+              else if (code=="D") label="Deleted"
+              else if (code=="C") label="Copied"
+              printf "- `%s` (%s)\n", $2, label
+            }
+          ')
+          if [ "$FILE_COUNT" -gt 50 ]; then
+            FILE_LIST="${FILE_LIST}
+          - ... and $((FILE_COUNT - 50)) more file(s) not shown"
+          fi
+
+          # Match on extracted paths (last tab-separated field), not the raw
+          # `name-status` lines - those start with the status letter, which
+          # would otherwise break every `^`-anchored pattern below.
+          PATHS_ONLY=$(printf '%s\n' "$CHANGED_FILES" | awk -F'\t' '{ print $NF }')
+
+          INFRA_MATCHES=$(printf '%s\n' "$PATHS_ONLY" | grep -Ei '(^|/)(infra|bicep)/|\.bicep$|(^|/)Dockerfile$|\.dockerignore$|^\.github/workflows/|docker-compose' || true)
+          TEST_MATCHES=$(printf '%s\n' "$PATHS_ONLY" | grep -Ei '(^|/)Tests?/|\.Tests[./]|Test\.csproj$' || true)
+          SRC_MATCHES=$(printf '%s\n' "$PATHS_ONLY" | grep -Ei '\.(cs|csproj)$' | grep -Eiv '(^|/)Tests?/|\.Tests[./]' || true)
+
+          if [ -n "$INFRA_MATCHES" ]; then
+            INFRA_IMPACT="Yes"
+          else
+            INFRA_IMPACT="No"
+          fi
+
+          if [ -n "$INFRA_MATCHES" ] || [ "$FILE_COUNT" -gt 30 ]; then
+            RISK="High"
+          elif [ -n "$SRC_MATCHES" ]; then
+            RISK="Medium"
+          else
+            RISK="Low"
+          fi
+
+          {
+            echo "- **Files changed:** ${FILE_COUNT}"
+            echo "- **Diff stat:** ${DIFFSTAT}"
+            [ -n "$INFRA_MATCHES" ] && echo "- Matches infra/CI patterns (workflows, Bicep, Dockerfile, docker-compose)."
+            [ "$FILE_COUNT" -gt 30 ] && echo "- Large changeset (> 30 files)."
+            [ -n "$SRC_MATCHES" ] && [ -z "$INFRA_MATCHES" ] && [ "$FILE_COUNT" -le 30 ] && echo "- Application source (.cs/.csproj) files changed."
+            [ -z "$INFRA_MATCHES" ] && [ -z "$SRC_MATCHES" ] && [ "$FILE_COUNT" -le 30 ] && echo "- No infra or application source files changed."
+          } > risk-rationale.md
+
+          {
+            if [ -n "$TEST_MATCHES" ]; then
+              echo "- Test files were changed as part of this PR."
+            fi
+            if [ -n "$SRC_MATCHES" ] && [ -z "$TEST_MATCHES" ]; then
+              echo "- Application source files changed with no corresponding test file changes detected - verify existing tests still cover this code, or add new tests."
+            fi
+            if [ -n "$INFRA_MATCHES" ]; then
+              echo "- Workflow/infrastructure files changed - check the CI run for this PR and, for Bicep changes, review a what-if/plan output before merging."
+            fi
+            if [ -z "$TEST_MATCHES" ] && [ -z "$SRC_MATCHES" ] && [ -z "$INFRA_MATCHES" ]; then
+              echo "- No source, test, or infra files changed - no additional testing expected beyond this PR's CI checks."
+            fi
+          } > testing-considerations.md
+
+          {
+            echo "## PR Summary"
+            echo ""
+            echo "**Title:** ${PR_TITLE}"
+            echo ""
+            echo "### Commits"
+            echo "${COMMITS}"
+            echo ""
+            echo "### Files Changed"
+            echo "${FILE_LIST}"
+            echo ""
+            echo "### Risk Assessment: ${RISK}"
+            cat risk-rationale.md
+            echo ""
+            echo "### Testing Considerations"
+            cat testing-considerations.md
+            echo ""
+            echo "### Infra Impact: ${INFRA_IMPACT}"
+            echo ""
+            echo "---"
+            echo "<sub>Generated deterministically from the PR title, commit messages, and \`git diff\` between the base and head commits. No generative summarization is used, so it cannot report changes that aren't actually in the diff.</sub>"
+          } > pr-summary-body.md
+
+      - name: Post or update PR summary comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('pr-summary-body.md', 'utf8');
+            const marker = '<!-- pr-summary-bot -->';
+            const commentBody = `${marker}\n${body}`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: commentBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody,
+              });
+            }

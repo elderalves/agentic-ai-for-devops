@@ -1,6 +1,7 @@
-public sealed class Worker(ILogger<Worker> logger) : BackgroundService
+public sealed class Worker(ILogger<Worker> logger, TimeSpan? delay = null) : BackgroundService
 {
     private readonly ILogger<Worker> _logger = logger;
+    private readonly TimeSpan _delay = delay ?? TimeSpan.FromSeconds(30);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -10,7 +11,7 @@ public sealed class Worker(ILogger<Worker> logger) : BackgroundService
 
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                await Task.Delay(_delay, stoppingToken);
             }
             catch (TaskCanceledException)
             {
