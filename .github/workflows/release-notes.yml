@@ -66,6 +66,18 @@ jobs:
             fs.writeFileSync('release-report.json', JSON.stringify(report, null, 2));
             core.info(`Collected metadata for ${pullRequests.length} merged PR(s).`);
 
+            const notesLines = ['## What\'s Changed', ''];
+            if (pullRequests.length === 0) {
+              notesLines.push('_No merged pull requests found for this commit._');
+            } else {
+              for (const pr of pullRequests) {
+                const author = pr.author ? `@${pr.author}` : 'unknown';
+                notesLines.push(`- ${pr.title} (#${pr.number}) by ${author} - ${pr.url}`);
+              }
+            }
+
+            fs.writeFileSync('release-notes.md', notesLines.join('\n') + '\n');
+
       - name: Upload release report
         uses: actions/upload-artifact@v4
         with:
