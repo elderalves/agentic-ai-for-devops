@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok(HealthEndpoints.GetHealthResponse()));
+
+app.MapGet("/version", () => Results.Ok(VersionEndpoints.GetVersionResponse()));
 
 app.MapGet("/api/orders", () =>
 {
@@ -26,6 +29,21 @@ public sealed record HealthResponse(string Status);
 public static class HealthEndpoints
 {
     public static HealthResponse GetHealthResponse() => new("ok");
+}
+
+public sealed record VersionResponse(string Version);
+
+public static class VersionEndpoints
+{
+    public static VersionResponse GetVersionResponse()
+    {
+        var informationalVersion = typeof(Program).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        var version = informationalVersion?.Split('+')[0] ?? "0.0.0";
+
+        return new VersionResponse(version);
+    }
 }
 
 public partial class Program { }
