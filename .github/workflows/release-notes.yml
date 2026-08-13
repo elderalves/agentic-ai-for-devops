@@ -10,11 +10,11 @@ concurrency:
   group: release-notes-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Least-privilege default: this job only reads the repo and PR metadata to
-# build release-report.json. It never writes to the repo, comments, or
-# releases - that's left to whatever job(s) consume this artifact later.
+# This job collects merged-PR metadata for the commit and publishes a draft
+# GitHub release from it, so it needs contents:write in addition to reading
+# PR metadata.
 permissions:
-  contents: read
+  contents: write
   pull-requests: read
 
 jobs:
@@ -91,5 +91,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: run-${{ github.run_number }}
+          name: run-${{ github.run_number }}
           body_path: release-notes.md
           draft: true
