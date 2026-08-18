@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
+app.MapGet("/hello", () => Results.Ok(new { message = "hello" }));
+
 app.MapGet("/health", () => Results.Ok(HealthEndpoints.GetHealthResponse()));
 
 app.MapGet("/version", () => Results.Ok(VersionEndpoints.GetVersionResponse()));
