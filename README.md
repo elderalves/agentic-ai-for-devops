@@ -1,4 +1,4 @@
-# genai-devops-teaching-guide
+# GenAI Devops
 
 This is a starter repo intentionally missing infra/pipelines/docs that will be built during live demos.
 
