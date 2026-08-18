@@ -2,7 +2,7 @@
 
 This is a starter repo intentionally missing infra/pipelines/docs that will be built during live demos.
 
-## Prereqs
+## Pre requisites
 - .NET 10 SDK
 - Git
 - VS Code
