@@ -51,7 +51,7 @@ runs:
 
         [[ -f "${{ inputs.system_prompt_file }}" ]] || (echo "System prompt file '${{ inputs.system_prompt_file }}' does not exist." && exit 1)
         [[ -f "${{ inputs.user_input_file }}" ]] || (echo "User input file '${{ inputs.user_input_file }}' does not exist." && exit 1)
-        [[ -f "${{ inputs.api_key }}" ]] || (echo "API key file '${{ inputs.api_key }}' does not exist." && exit 1)
+        [[ -n "${{ inputs.api_key }}" ]] || (echo "Input 'api_key' must be provided." && exit 1)
     
     - name: Call OpenAI
       id: call
@@ -97,13 +97,13 @@ runs:
         OUTPUT_FILE="${{ inputs.output_file }}"
 
         MAX_RETRIES=3
-        ATTEMP=1
+        ATTEMPT=1
         SLEEP_SECONDS=2
 
         while true; do
           START_TIME=$(date +%s)
 
-          http_code=$(curl -sS -o "$RESPONSE_FILE" -w "%(http_code)" \
+          http_code=$(curl -sS -o "$RESPONSE_FILE" -w "%{http_code}" \
             -X POST "https://api.openai.com/v1/chat/completions" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ inputs.api_key }}" \
