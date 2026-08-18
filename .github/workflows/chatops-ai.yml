@@ -49,11 +49,9 @@ jobs:
 
       - name: Generate AI response
         id: ai
-        uses: ./.github/azure-openai-chat
+        uses: ./.github/openai-chat
         with:
-          endpoint: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-          api_key: ${{ secrets.AZURE_OPENAI_API_KEY }}
-          deployment: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          api_key: ${{ secrets.OPENAI_API_KEY }}
           system_prompt_file: "ai/prompts/chatops.prompt.md"
           user_input_file: "chatops-input.json"
           output_file: "chatops-output.md"
