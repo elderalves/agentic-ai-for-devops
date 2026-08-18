@@ -1,0 +1,169 @@
+name: Release Notes (AI)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  collect-metadata:
+    name: Collect PR metadata
+    runs-on: ubuntu-latest
+    outputs:
+      pr_count: ${{ steps.extract.outputs.pr_count }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Collect merged pull request metadata
+        id: extract
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const MAX_TITLE_CHARTS = 200;
+            const MAX_BODY_CHARTS = 1200;
+
+            function truncate(str, max) {
+              if (!str) return '';
+              const s = String(str);
+              return s.length > max ? s.slice(0, max) + '...[truncated]' : s;
+            }
+
+            function sanitize(str) {
+              if (!str) return '';
+              return String(str).replace(/```/g, '`');
+            }
+
+            const commits = context.payload.commits ?? [];
+            const prsByNumbers = new Map();
+
+            for (const commit of commits) {
+              const associatedPrs = await github.paginate(
+                github.rest.repos.listPullRequestsAssociatedWithCommit,
+                {
+                  owner,
+                  repo,
+                  commit_sha: commit.id,
+                  per_page: 100,
+                }
+              );
+
+              for (const pr of associatedPrs) {
+                if(!pr.merged_at) continue;
+                if(pr.base?.ref !== 'main') continue;
+
+                if(!prsByNumbers.has(pr.number)) {
+                  prsByNumbers.set(pr.number, {
+                    number: pr.number,
+                    title: truncate(sanitize(pr.title), MAX_TITLE_CHARTS),
+                    labels: (pr.labels ?? []).map(label => label.name),
+                    author: pr.user?.login ?? null,
+                    body: truncate(sanitize(pr.body), MAX_BODY_CHARTS),
+                  });
+                }
+              }
+            }
+
+            const report = {
+              generated_at: new Date().toISOString(),
+              repository: `${owner}/${repo}`,
+              pull_requests: Array.from(prsByNumbers.values()),
+            }
+
+            fs.writeFileSync('release-report.json', JSON.stringify(report, null, 2));
+            core.info(`Wrote release-report.json with ${report.pull_requests.length} merged PR(s).`);
+
+            const prCount = report.pull_requests.length;
+            core.setOutput('pr_count', String(prCount));
+
+      - name: Upload release input artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-input
+          path: release-report.json
+  generate-release-notes:
+    name: Generate Release Notes (OpenAI)
+    if: needs.collect-metadata.outputs.pr_count != '0'
+    needs: collect-metadata
+    runs-on: ubuntu-latest
+    environment:
+      name: devops-dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download release input artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-input
+
+      - name: Generate release notes via reusable action
+        id: aoai
+        uses: ./.github/openai-chat
+        with:
+          api_key: ${{ secrets.OPENAI_API_KEY }}
+          system_prompt_file: "ai/prompts/release-notes.prompt.md"
+          user_input_file: "release-report.json"
+          output_file: "release-notes.md"
+          temperature: "0.1"
+
+      - name: Upload release output artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-output
+          path: |
+            release-notes.md
+            release-report.json
+            .aoai.response.json
+            ai-telemetry.json
+  validate-release-notes:
+    name: Validate deterministic contract
+    needs: [generate-release-notes, collect-metadata]
+    if: needs.collect-metadata.outputs.pr_count != '0'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release output artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-output
+
+      - name: Validate headings + bullets
+        run: |
+          set -euo pipefail
+          test -s release-notes.md
+
+          grep -q "^## Features" release-notes.md
+          grep -q "^## Fixes" release-notes.md
+          grep -q "^## Infrastructure" release-notes.md
+          grep -q "^## Breaking Changes" release-notes.md
+
+          awk '
+            /^## /{h=$0; c=0; next}
+            /^- /{c++}
+            /^##/{if(h!=""&&c==0){print"Nobulletsunder"h; exit 1 } }
+            END{if(h!=""&&c==0){print"Nobulletsunder"h; exit 1 } }
+            ' release-notes.md
+  publish-release:
+    name: Publish draft Github Release
+    needs: [collect-metadata, validate-release-notes]
+    if: needs.collect-metadata.outputs.pr_count != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download release output artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-output
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release-notes.md
+          draft: true
+          tag_name: v0.1.${{ github.run_number }}
