@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="88814768-7f48-4d95-b991-484ad6d4dd6c" name="@Michaels-MacBook-Pro-3 2026-08-18 09:59:32" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-08-18T09:59:32.9316510-03:00" queuing="2026-08-18T09:59:32.9316510-03:00" start="2026-08-18T09:59:32.0683570-03:00" finish="2026-08-18T09:59:32.9432370-03:00" />
+  <TestSettings name="default" id="b7a92a21-bb34-48b3-b95f-51cd4ab14408">
+    <Deployment runDeploymentRoot="_Michaels-MacBook-Pro-3_2026-08-18_09_59_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="70af2b7d-6af6-449d-b30d-fb1777ea8ddc" testId="92e01230-8892-58f2-fc9b-b4e350a15a90" testName="OrderProcessor.Tests.ProgramTests.CreateHostBuilder_RegistersWorker" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.1614179" startTime="2026-08-18T09:59:32.8323490-03:00" endTime="2026-08-18T09:59:32.8323490-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70af2b7d-6af6-449d-b30d-fb1777ea8ddc" />
+    <UnitTestResult executionId="4bcb3f38-c31a-41dd-8d8f-80fd5ff69f8c" testId="dc235cfc-9553-f3b3-ba4f-292a635226b9" testName="OrderProcessor.Tests.WorkerTests.ExecuteAsync_LogsAndLoops_UntilStopped" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0621573" startTime="2026-08-18T09:59:32.7494090-03:00" endTime="2026-08-18T09:59:32.7494090-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4bcb3f38-c31a-41dd-8d8f-80fd5ff69f8c" />
+    <UnitTestResult executionId="32ee7fad-5a66-4769-9be8-a46d9192f624" testId="8609dff4-715f-cad4-6930-b1381554dcca" testName="OrderProcessor.Tests.WorkerTests.ExecuteAsync_StopsImmediatelyWhenCancelled" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0120122" startTime="2026-08-18T09:59:32.6868740-03:00" endTime="2026-08-18T09:59:32.6869940-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32ee7fad-5a66-4769-9be8-a46d9192f624" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="OrderProcessor.Tests.WorkerTests.ExecuteAsync_LogsAndLoops_UntilStopped" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderprocessor.tests/bin/release/net10.0/orderprocessor.tests.dll" id="dc235cfc-9553-f3b3-ba4f-292a635226b9">
+      <Execution id="4bcb3f38-c31a-41dd-8d8f-80fd5ff69f8c" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderProcessor.Tests/bin/Release/net10.0/OrderProcessor.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderProcessor.Tests.WorkerTests" name="ExecuteAsync_LogsAndLoops_UntilStopped" />
+    </UnitTest>
+    <UnitTest name="OrderProcessor.Tests.WorkerTests.ExecuteAsync_StopsImmediatelyWhenCancelled" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderprocessor.tests/bin/release/net10.0/orderprocessor.tests.dll" id="8609dff4-715f-cad4-6930-b1381554dcca">
+      <Execution id="32ee7fad-5a66-4769-9be8-a46d9192f624" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderProcessor.Tests/bin/Release/net10.0/OrderProcessor.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderProcessor.Tests.WorkerTests" name="ExecuteAsync_StopsImmediatelyWhenCancelled" />
+    </UnitTest>
+    <UnitTest name="OrderProcessor.Tests.ProgramTests.CreateHostBuilder_RegistersWorker" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderprocessor.tests/bin/release/net10.0/orderprocessor.tests.dll" id="92e01230-8892-58f2-fc9b-b4e350a15a90">
+      <Execution id="70af2b7d-6af6-449d-b30d-fb1777ea8ddc" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderProcessor.Tests/bin/Release/net10.0/OrderProcessor.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderProcessor.Tests.ProgramTests" name="CreateHostBuilder_RegistersWorker" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="92e01230-8892-58f2-fc9b-b4e350a15a90" executionId="70af2b7d-6af6-449d-b30d-fb1777ea8ddc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc235cfc-9553-f3b3-ba4f-292a635226b9" executionId="4bcb3f38-c31a-41dd-8d8f-80fd5ff69f8c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8609dff4-715f-cad4-6930-b1381554dcca" executionId="32ee7fad-5a66-4769-9be8-a46d9192f624" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 10.0.6)
+[xUnit.net 00:00:00.06]   Discovering: OrderProcessor.Tests
+[xUnit.net 00:00:00.08]   Discovered:  OrderProcessor.Tests
+[xUnit.net 00:00:00.09]   Starting:    OrderProcessor.Tests
+[xUnit.net 00:00:00.31]   Finished:    OrderProcessor.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

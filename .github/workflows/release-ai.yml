@@ -83,7 +83,7 @@ jobs:
             core.setOutput('pr_count', String(prCount));
 
       - name: Upload release input artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-input
           path: release-report.json

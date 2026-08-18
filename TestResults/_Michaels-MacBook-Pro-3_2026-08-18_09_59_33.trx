@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9dce0643-1dc1-4839-a3c0-d873a98977c9" name="@Michaels-MacBook-Pro-3 2026-08-18 09:59:33" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-08-18T09:59:33.1406810-03:00" queuing="2026-08-18T09:59:33.1406810-03:00" start="2026-08-18T09:59:32.0683940-03:00" finish="2026-08-18T09:59:33.1473510-03:00" />
+  <TestSettings name="default" id="29562033-9414-470e-929b-da6b40fe1672">
+    <Deployment runDeploymentRoot="_Michaels-MacBook-Pro-3_2026-08-18_09_59_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9e8b9fec-4c48-484c-b02f-386704c963cb" testId="2819fada-26f2-5de9-2bb2-276aef57f855" testName="OrderService.Tests.ResultTests.Ok_ReturnsSuccessWithNoError" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0027655" startTime="2026-08-18T09:59:32.6814670-03:00" endTime="2026-08-18T09:59:32.6815020-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9e8b9fec-4c48-484c-b02f-386704c963cb" />
+    <UnitTestResult executionId="72920db3-5895-4077-9b80-ec28cc5d53c5" testId="714f14e6-ad6b-4165-1830-74ea6039fd86" testName="OrderService.Tests.OrderDtoTests.Constructor_SetsProperties" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0058271" startTime="2026-08-18T09:59:32.6837650-03:00" endTime="2026-08-18T09:59:32.6837650-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72920db3-5895-4077-9b80-ec28cc5d53c5" />
+    <UnitTestResult executionId="b4fc1142-3751-446a-a7b9-2a5eeead5188" testId="b290ec6a-3b18-973f-8c97-bda583d5e9da" testName="OrderService.Tests.OrderServiceIntegrationTests.VersionEndpoint_ReturnsVersion" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0090694" startTime="2026-08-18T09:59:33.0241040-03:00" endTime="2026-08-18T09:59:33.0241050-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4fc1142-3751-446a-a7b9-2a5eeead5188" />
+    <UnitTestResult executionId="43ede731-0384-4ba7-bcc5-20ef26579dd1" testId="15d192ee-a99b-69b6-e4f3-6a72e1b51e4b" testName="OrderService.Tests.OrderServiceIntegrationTests.OrdersEndpoint_ReturnsOrders" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.3265184" startTime="2026-08-18T09:59:33.0036900-03:00" endTime="2026-08-18T09:59:33.0036900-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43ede731-0384-4ba7-bcc5-20ef26579dd1" />
+    <UnitTestResult executionId="7e4dc41b-abac-4f03-87ab-cfd90262b5ef" testId="00152763-65f4-1135-18d9-026a07b45028" testName="OrderService.Tests.HealthEndpointsTests.GetVersionResponse_ReturnsVersion" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0027793" startTime="2026-08-18T09:59:32.6831020-03:00" endTime="2026-08-18T09:59:32.6831020-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e4dc41b-abac-4f03-87ab-cfd90262b5ef" />
+    <UnitTestResult executionId="1457ce8f-5eb0-4055-b72c-3ed5dd9360b7" testId="355bf352-554a-ebc4-4e8c-e3e6e0aab550" testName="OrderService.Tests.HealthEndpointsTests.GetHealthResponse_ReturnsOkStatus" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0003756" startTime="2026-08-18T09:59:32.6837760-03:00" endTime="2026-08-18T09:59:32.6837760-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1457ce8f-5eb0-4055-b72c-3ed5dd9360b7" />
+    <UnitTestResult executionId="4c02ac14-38d7-43dd-bf7b-0f8849ec174b" testId="8c561a39-ba5f-0950-01b5-bab4551a5488" testName="OrderService.Tests.OrderServiceIntegrationTests.HealthEndpoint_ReturnsOk" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0094950" startTime="2026-08-18T09:59:33.0151950-03:00" endTime="2026-08-18T09:59:33.0151950-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c02ac14-38d7-43dd-bf7b-0f8849ec174b" />
+    <UnitTestResult executionId="9aa17b1a-c0f9-4323-b766-15e942be9650" testId="f247ed70-35ea-6994-6b14-54b0f9b552f7" testName="OrderService.Tests.ResultTests.Fail_ReturnsFailureWithError" computerName="Michaels-MacBook-Pro-3" duration="00:00:00.0001786" startTime="2026-08-18T09:59:32.6837520-03:00" endTime="2026-08-18T09:59:32.6837520-03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9aa17b1a-c0f9-4323-b766-15e942be9650" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="OrderService.Tests.HealthEndpointsTests.GetVersionResponse_ReturnsVersion" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="00152763-65f4-1135-18d9-026a07b45028">
+      <Execution id="7e4dc41b-abac-4f03-87ab-cfd90262b5ef" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.HealthEndpointsTests" name="GetVersionResponse_ReturnsVersion" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.OrderServiceIntegrationTests.OrdersEndpoint_ReturnsOrders" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="15d192ee-a99b-69b6-e4f3-6a72e1b51e4b">
+      <Execution id="43ede731-0384-4ba7-bcc5-20ef26579dd1" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.OrderServiceIntegrationTests" name="OrdersEndpoint_ReturnsOrders" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.ResultTests.Ok_ReturnsSuccessWithNoError" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="2819fada-26f2-5de9-2bb2-276aef57f855">
+      <Execution id="9e8b9fec-4c48-484c-b02f-386704c963cb" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.ResultTests" name="Ok_ReturnsSuccessWithNoError" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.HealthEndpointsTests.GetHealthResponse_ReturnsOkStatus" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="355bf352-554a-ebc4-4e8c-e3e6e0aab550">
+      <Execution id="1457ce8f-5eb0-4055-b72c-3ed5dd9360b7" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.HealthEndpointsTests" name="GetHealthResponse_ReturnsOkStatus" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.OrderServiceIntegrationTests.HealthEndpoint_ReturnsOk" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="8c561a39-ba5f-0950-01b5-bab4551a5488">
+      <Execution id="4c02ac14-38d7-43dd-bf7b-0f8849ec174b" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.OrderServiceIntegrationTests" name="HealthEndpoint_ReturnsOk" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.OrderServiceIntegrationTests.VersionEndpoint_ReturnsVersion" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="b290ec6a-3b18-973f-8c97-bda583d5e9da">
+      <Execution id="b4fc1142-3751-446a-a7b9-2a5eeead5188" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.OrderServiceIntegrationTests" name="VersionEndpoint_ReturnsVersion" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.ResultTests.Fail_ReturnsFailureWithError" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="f247ed70-35ea-6994-6b14-54b0f9b552f7">
+      <Execution id="9aa17b1a-c0f9-4323-b766-15e942be9650" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.ResultTests" name="Fail_ReturnsFailureWithError" />
+    </UnitTest>
+    <UnitTest name="OrderService.Tests.OrderDtoTests.Constructor_SetsProperties" storage="/applications/mamp/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/orderservice.tests/bin/release/net10.0/orderservice.tests.dll" id="714f14e6-ad6b-4165-1830-74ea6039fd86">
+      <Execution id="72920db3-5895-4077-9b80-ec28cc5d53c5" />
+      <TestMethod codeBase="/Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService.Tests/bin/Release/net10.0/OrderService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="OrderService.Tests.OrderDtoTests" name="Constructor_SetsProperties" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2819fada-26f2-5de9-2bb2-276aef57f855" executionId="9e8b9fec-4c48-484c-b02f-386704c963cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="714f14e6-ad6b-4165-1830-74ea6039fd86" executionId="72920db3-5895-4077-9b80-ec28cc5d53c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b290ec6a-3b18-973f-8c97-bda583d5e9da" executionId="b4fc1142-3751-446a-a7b9-2a5eeead5188" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15d192ee-a99b-69b6-e4f3-6a72e1b51e4b" executionId="43ede731-0384-4ba7-bcc5-20ef26579dd1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00152763-65f4-1135-18d9-026a07b45028" executionId="7e4dc41b-abac-4f03-87ab-cfd90262b5ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="355bf352-554a-ebc4-4e8c-e3e6e0aab550" executionId="1457ce8f-5eb0-4055-b72c-3ed5dd9360b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c561a39-ba5f-0950-01b5-bab4551a5488" executionId="4c02ac14-38d7-43dd-bf7b-0f8849ec174b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f247ed70-35ea-6994-6b14-54b0f9b552f7" executionId="9aa17b1a-c0f9-4323-b766-15e942be9650" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 10.0.6)
+[xUnit.net 00:00:00.06]   Discovering: OrderService.Tests
+[xUnit.net 00:00:00.08]   Discovered:  OrderService.Tests
+[xUnit.net 00:00:00.08]   Starting:    OrderService.Tests
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Applications/MAMP/htdocs/mtc/mtc-azure/agentic-ai-for-devops/src/OrderService
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost/api/orders - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/orders'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'List`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/orders'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost/api/orders - 200 - application/json;+charset=utf-8 58.7974ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost/health - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /health'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'HealthResponse' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /health'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost/health - 200 - application/json;+charset=utf-8 3.2347ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost/version - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /version'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'VersionResponse' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /version'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost/version - 200 - application/json;+charset=utf-8 6.1300ms
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+[xUnit.net 00:00:00.51]   Finished:    OrderService.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
