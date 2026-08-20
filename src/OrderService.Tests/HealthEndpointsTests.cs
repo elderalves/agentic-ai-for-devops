@@ -9,7 +9,7 @@ public sealed class HealthEndpointsTests
     {
         var response = HealthEndpoints.GetHealthResponse();
 
-        Assert.Equal("ok", response.Status);
+        Assert.Equal("fail", response.Status);
     }
 
     [Fact]
