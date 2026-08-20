@@ -3,6 +3,16 @@ name: PR Diff AI Analysis
 on:
   # pull_request:
   workflow_dispatch:
+    inputs:
+      owner:
+        description: "PR repository owner (org or user) for manual testing"
+        required: true
+      repo:
+        description: "PR repository name for manual testing"
+        required: true
+      pr_number:
+        description: "PR number for manual testing"
+        required: true
 
 permissions:
   contents: read
@@ -56,6 +66,10 @@ jobs:
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PR_ANALYSIS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCP_PR_OWNER: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.repo.owner.login || github.event.inputs.owner }}
+          MCP_PR_REPO: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.repo.name || github.event.inputs.repo }}
+          MCP_PR_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.inputs.pr_number }}
         run: |
           set -euo pipefail
           dotnet run --file ai/agents/PRCodeQualityAgent.cs -- ./artifacts/pr.diff > ./artifacts/pr-analysis.json
