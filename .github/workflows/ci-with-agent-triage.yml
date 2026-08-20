@@ -7,6 +7,8 @@ on:
 jobs:
   build_test_triage:
     runs-on: ubuntu-latest
+    environment:
+      name: devops-dev
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -20,10 +20,22 @@ using OpenAI.Chat;
 // Inputs / environment
 // Azure OpenAI provider guidance is part of Agent Framework docs.
 // ----------------------------
-var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
-    ?? throw new InvalidOperationException("Set OPENAI_API_KEY");
+var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 var modelName = Environment.GetEnvironmentVariable("OPENAI_MODEL")
     ?? "gpt-4o-mini";
+
+if (string.IsNullOrWhiteSpace(apiKey))
+{
+    Console.WriteLine(JsonSerializer.Serialize(new
+    {
+        failureCategory = "configuration",
+        severity = "high",
+        likelyCause = "OPENAI_API_KEY is missing or empty",
+        recommendedNextStep = "Set OPENAI_API_KEY in CI secrets and map it into the workflow step environment",
+        confidence = 1.0
+    }, new JsonSerializerOptions { WriteIndented = true }));
+    return;
+}
 
 using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(2));
 
